@@ -46,4 +46,4 @@ A simple REST API is available in the `api` directory. It uses a SQLite database
 - `POST /api/<table>` – create a record with JSON body
 - `PUT /api/<table>/<id>` – update a record with JSON body
 
-The database file `database.sqlite` will be created automatically in the project root when the API is first accessed.
+The database file `db/database.sqlite` will be created automatically in the `db` directory when the API is first accessed.
