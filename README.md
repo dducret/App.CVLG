@@ -10,10 +10,22 @@ See [SPECIFICATION.md](SPECIFICATION.md) for the detailed functional and technic
 A simple REST API is available in the `api` directory. It uses a SQLite database created from `Documentation/appcvlg.db.sql` on first run.
 
 ### Start a development server
+### Start a development server for the API
 
 ```bash
 php -S localhost:8000 -t api
 ```
+
+### Web Interface
+
+A small web interface using Materialize is available in the `public` directory.
+To serve both the API and the interface during development run:
+
+```bash
+php -S localhost:8000
+```
+
+Then open `http://localhost:8000/public/` to access the login page.
 
 ### Endpoints
 
