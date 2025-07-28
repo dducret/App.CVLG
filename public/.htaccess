@@ -1,0 +1,2 @@
+# .htaccess or Apache config
+DirectoryIndex router.php index.php
