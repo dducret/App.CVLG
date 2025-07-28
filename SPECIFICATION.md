@@ -5,7 +5,7 @@ The application "CVLG" facilitates management of paraglide club activities inclu
 
 ## Technologies
 - **Materialize.js** for the user interface
-- **MariaDB** for the database
+- **Sqlite** for the database
 - **PHP** for backend logic
 
 ## Modules
