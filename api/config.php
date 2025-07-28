@@ -1,5 +1,5 @@
 <?php
-$dbFile = __DIR__ . '/../database.sqlite';
+$dbFile = __DIR__ . '/../db/database.sqlite';
 $new = !file_exists($dbFile);
 $pdo = new PDO('sqlite:' . $dbFile);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
