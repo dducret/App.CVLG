@@ -8,7 +8,9 @@ if (!$email || !$password) {
     exit;
 }
 // Fetch all persons via the API
-$apiUrl = '/api/Person';
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$apiUrl = $scheme . '://' . $host . '/api/Person';
 $response = @file_get_contents($apiUrl);
 if ($response === false) {
     $_SESSION['login_error'] = 'Unable to contact API';
