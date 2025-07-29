@@ -10,13 +10,10 @@ if (!isset($_SESSION['user_id'])) {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
     <title><?= t('welcome') ?></title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 </head>
 <body class="container">
-    <h3 class="center-align">Welcome</h3>
-    <p>You are logged in.</p>
     <p class="right-align">
         <?= t('language') ?>:
         <a href="?lang=en">EN</a> |
@@ -27,7 +24,6 @@ if (!isset($_SESSION['user_id'])) {
     <h3 class="center-align"><?= t('welcome') ?></h3>
     <p><?= t('logged_in') ?></p>
     <div class="center-align">
-        <a href="logout.php" class="btn">Logout</a>
         <a href="members.php" class="btn"><?= t('member_management') ?></a>
     </div>
     <div class="center-align" style="margin-top:20px;">
