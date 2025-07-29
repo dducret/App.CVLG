@@ -99,4 +99,9 @@ function handlePut(PDO $pdo, string $table, string $id): void {
     $stmt->execute($data);
     echo json_encode(['updated' => $stmt->rowCount()]);
 }
+function handleDelete(PDO $pdo, string $table, string $id): void {
+    $stmt = $pdo->prepare("DELETE FROM \"$table\" WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    echo json_encode(['deleted' => $stmt->rowCount()]);
+}
 ?>
