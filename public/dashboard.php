@@ -34,6 +34,9 @@ if (!isset($_SESSION['user_id'])) {
         <a href="vehicles.php" class="btn"><?= t('vehicle_management') ?></a>
     </div>
     <div class="center-align" style="margin-top:20px;">
+        <a href="managers.php" class="btn"><?= t('manager_management') ?></a>
+    </div>
+    <div class="center-align" style="margin-top:20px;">
         <a href="logout.php" class="btn"><?= t('logout') ?></a>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
