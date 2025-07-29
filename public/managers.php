@@ -10,8 +10,9 @@ if (!isset($_SESSION['user_id'])) {
 
 $rightsMap = [
     0 => t('right_read'),
-    1 => t('right_modify'),
-    2 => t('right_full')
+    1 => t('right_read'),
+    2 => t('right_modify'),
+    4 => t('right_full')
 ];
 
 if (isset($_GET['delete'])) {
