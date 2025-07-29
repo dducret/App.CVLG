@@ -25,6 +25,13 @@ if (!isset($_SESSION['user_id'])) {
     <p><?= t('logged_in') ?></p>
     <div class="center-align">
         <a href="members.php" class="btn"><?= t('member_management') ?></a>
+        <a href="drivers.php" class="btn" style="margin-left:10px;"><?= t('driver_management') ?></a>
+    </div>
+    <div class="center-align" style="margin-top:20px;">
+        <a href="journeys.php" class="btn"><?= t('journey_management') ?></a>
+    </div>
+    <div class="center-align" style="margin-top:20px;">
+        <a href="vehicles.php" class="btn"><?= t('vehicle_management') ?></a>
     </div>
     <div class="center-align" style="margin-top:20px;">
         <a href="logout.php" class="btn"><?= t('logout') ?></a>
