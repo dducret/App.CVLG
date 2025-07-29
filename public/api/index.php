@@ -31,6 +31,14 @@ try {
                 handlePut($pdo, $table, $id);
             }
             break;
+        case 'DELETE':
+            if ($id === null) {
+                http_response_code(400);
+                echo json_encode(['error' => 'ID required for delete']);
+            } else {
+                handleDelete($pdo, $table, $id);
+            }
+            break;
         default:
             http_response_code(405);
             echo json_encode(['error' => 'Method not allowed']);
