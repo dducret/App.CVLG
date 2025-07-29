@@ -12,12 +12,10 @@ require __DIR__ . '/lang.php';
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>CVLG Login</title>
     <title><?= t('login_title') ?></title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 </head>
 <body class="container">
-    <h3 class="center-align">CVLG Login</h3>
     <p class="right-align">
         <?= t('language') ?>:
         <a href="?lang=en">EN</a> |
@@ -34,19 +32,16 @@ require __DIR__ . '/lang.php';
             <div class="row">
                 <div class="input-field col s12">
                     <input id="email" type="email" name="email" class="validate" required>
-                    <label for="email">Email</label>
                     <label for="email"><?= t('email') ?></label>
                 </div>
             </div>
             <div class="row">
                 <div class="input-field col s12">
                     <input id="password" type="password" name="password" class="validate" required>
-                    <label for="password">Password</label>
                     <label for="password"><?= t('password') ?></label>
                 </div>
             </div>
             <div class="row center-align">
-                <button class="btn waves-effect waves-light" type="submit">Login</button>
                 <button class="btn waves-effect waves-light" type="submit"><?= t('login') ?></button>
             </div>
         </form>
