@@ -3,6 +3,8 @@ App for paraglide club
 
 This project is a web application for the CVLG paraglide club. It aims to facilitate ride scheduling, member registration, coordination with drivers, and tracking of club statistics.
 
+Member management screens are available in the dashboard and the interface supports English, French, German and Italian.
+
 See [SPECIFICATION.md](SPECIFICATION.md) for the detailed functional and technical specification.
 
 ## API Usage
