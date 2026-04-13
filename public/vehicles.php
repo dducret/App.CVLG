@@ -1,137 +1,83 @@
 <?php
-session_start();
-require __DIR__ . '/lang.php';
-require __DIR__ . '/api/config.php';
+require_once dirname(__DIR__) . '/app/bootstrap.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: index.php');
-    exit;
-}
+$user = require_roles(['R', 'L']);
+$statusLabels = [0 => 'Operationnel', 1 => 'En maintenance', 2 => 'En panne'];
 
-// Delete vehicle
 if (isset($_GET['delete'])) {
-    $stmt = $pdo->prepare('DELETE FROM Vehicule WHERE id = ?');
-    $stmt->execute([$_GET['delete']]);
-    header('Location: vehicles.php');
-    exit;
+    db()->prepare('DELETE FROM Vehicule WHERE id = ?')->execute([(int) $_GET['delete']]);
+    flash('success', 'Vehicule supprime.');
+    redirect('vehicles.php');
 }
 
-// Fetch vehicle to edit
-$edit = null;
-if (isset($_GET['edit'])) {
-    $stmt = $pdo->prepare('SELECT * FROM Vehicule WHERE id = ?');
-    $stmt->execute([$_GET['edit']]);
-    $edit = $stmt->fetch(PDO::FETCH_ASSOC);
-}
-
-// Create or update
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'] ?? '';
-    $registration = $_POST['registration'] ?? '';
-    $label = $_POST['label'] ?? '';
-    $seats = (int)($_POST['seats'] ?? 0);
-    $status = (int)($_POST['status'] ?? 0);
-    if (!empty($_POST['id'])) {
-        $stmt = $pdo->prepare('UPDATE Vehicule SET name=?, registration=?, label=?, seats=?, status=? WHERE id=?');
-        $stmt->execute([$name, $registration, $label, $seats, $status, $_POST['id']]);
+    $payload = [
+        trim($_POST['name'] ?? ''),
+        trim($_POST['registration'] ?? ''),
+        trim($_POST['label'] ?? ''),
+        (int) ($_POST['seats'] ?? 0),
+        (int) ($_POST['status'] ?? 0),
+    ];
+    $id = (int) ($_POST['id'] ?? 0);
+    if ($id > 0) {
+        db()->prepare('UPDATE Vehicule SET name=?, registration=?, label=?, seats=?, status=? WHERE id=?')
+            ->execute([...$payload, $id]);
+        flash('success', 'Vehicule mis a jour.');
     } else {
-        $stmt = $pdo->prepare('INSERT INTO Vehicule(name, registration, label, seats, status) VALUES (?,?,?,?,?)');
-        $stmt->execute([$name, $registration, $label, $seats, $status]);
+        db()->prepare('INSERT INTO Vehicule(name, registration, label, seats, status) VALUES (?, ?, ?, ?, ?)')
+            ->execute($payload);
+        flash('success', 'Vehicule ajoute.');
     }
-    header('Location: vehicles.php');
-    exit;
+    redirect('vehicles.php');
 }
 
-$vehicles = $pdo->query('SELECT * FROM Vehicule')->fetchAll(PDO::FETCH_ASSOC);
-$statusLabels = [0 => t('status_operationnal'), 1 => t('status_maintenance'), 2 => t('status_broken')];
+$edit = isset($_GET['edit']) ? fetch_one('SELECT * FROM Vehicule WHERE id = ?', [(int) $_GET['edit']]) : null;
+$vehicles = fetch_all('SELECT * FROM Vehicule ORDER BY name');
+
+render_header('Gestion des vehicules', $user);
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title><?= t('vehicle_management') ?></title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-</head>
-<body class="container">
-    <p class="right-align">
-        <?= t('language') ?>:
-        <a href="?lang=en">EN</a> |
-        <a href="?lang=fr">FR</a> |
-        <a href="?lang=de">DE</a> |
-        <a href="?lang=it">IT</a>
-    </p>
-    <h3 class="center-align"><?= t('vehicle_management') ?></h3>
-    <table class="striped">
-        <thead>
-            <tr>
-                <th><?= t('name') ?></th>
-                <th><?= t('registration') ?></th>
-                <th><?= t('label') ?></th>
-                <th><?= t('seats') ?></th>
-                <th><?= t('status') ?></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($vehicles as $v): ?>
-                <tr>
-                    <td><?= htmlspecialchars($v['name']) ?></td>
-                    <td><?= htmlspecialchars($v['registration']) ?></td>
-                    <td><?= htmlspecialchars($v['label']) ?></td>
-                    <td><?= htmlspecialchars($v['seats']) ?></td>
-                    <td><?= $statusLabels[$v['status']] ?? $v['status'] ?></td>
-                    <td>
-                        <a href="vehicles.php?edit=<?= $v['id'] ?>" class="btn-small"><?= t('edit') ?></a>
-                        <a href="vehicles.php?delete=<?= $v['id'] ?>" class="btn-small red" onclick="return confirm('<?= t('delete') ?>?');"><?= t('delete') ?></a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-
-    <h4><?= t('add_vehicle') ?></h4>
-    <form method="post">
-        <input type="hidden" name="id" value="<?= htmlspecialchars($edit['id'] ?? '') ?>">
-        <div class="row">
-            <div class="input-field col s6">
-                <input type="text" name="name" id="name" value="<?= htmlspecialchars($edit['name'] ?? '') ?>" required>
-                <label for="name"><?= t('name') ?></label>
-            </div>
-            <div class="input-field col s6">
-                <input type="text" name="registration" id="registration" value="<?= htmlspecialchars($edit['registration'] ?? '') ?>">
-                <label for="registration"><?= t('registration') ?></label>
-            </div>
+<div class="row">
+    <div class="col s12 l7">
+        <div class="soft-box">
+            <table class="striped">
+                <thead><tr><th>Nom</th><th>Immatriculation</th><th>Places</th><th>Statut</th><th></th></tr></thead>
+                <tbody>
+                <?php foreach ($vehicles as $vehicle): ?>
+                    <tr>
+                        <td><?= e($vehicle['name']) ?></td>
+                        <td><?= e($vehicle['registration']) ?></td>
+                        <td><?= e((string) $vehicle['seats']) ?></td>
+                        <td><?= e($statusLabels[$vehicle['status']] ?? (string) $vehicle['status']) ?></td>
+                        <td class="right-align">
+                            <a class="btn-small" href="?edit=<?= (int) $vehicle['id'] ?>">Editer</a>
+                            <a class="btn-small red" href="?delete=<?= (int) $vehicle['id'] ?>" onclick="return confirm('Supprimer ce vehicule ?')">Supprimer</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
-        <div class="row">
-            <div class="input-field col s4">
-                <input type="text" name="label" id="label" value="<?= htmlspecialchars($edit['label'] ?? '') ?>">
-                <label for="label"><?= t('label') ?></label>
-            </div>
-            <div class="input-field col s4">
-                <input type="number" name="seats" id="seats" value="<?= htmlspecialchars($edit['seats'] ?? '') ?>">
-                <label for="seats"><?= t('seats') ?></label>
-            </div>
-            <div class="input-field col s4">
-                <select name="status">
-                    <option value="0" <?= isset($edit['status']) && $edit['status']==0 ? 'selected' : '' ?>><?= t('status_operationnal') ?></option>
-                    <option value="1" <?= isset($edit['status']) && $edit['status']==1 ? 'selected' : '' ?>><?= t('status_maintenance') ?></option>
-                    <option value="2" <?= isset($edit['status']) && $edit['status']==2 ? 'selected' : '' ?>><?= t('status_broken') ?></option>
-                </select>
-                <label><?= t('status') ?></label>
-            </div>
+    </div>
+    <div class="col s12 l5">
+        <div class="soft-box">
+            <h5><?= $edit ? 'Modifier un vehicule' : 'Nouveau vehicule' ?></h5>
+            <form method="post">
+                <input type="hidden" name="id" value="<?= e($edit['id'] ?? '') ?>">
+                <div class="input-field"><input type="text" id="name" name="name" value="<?= e($edit['name'] ?? '') ?>" required><label for="name" class="active">Nom</label></div>
+                <div class="input-field"><input type="text" id="registration" name="registration" value="<?= e($edit['registration'] ?? '') ?>"><label for="registration" class="active">Immatriculation</label></div>
+                <div class="input-field"><input type="text" id="label" name="label" value="<?= e($edit['label'] ?? '') ?>"><label for="label" class="active">Libelle</label></div>
+                <div class="input-field"><input type="number" id="seats" name="seats" value="<?= e($edit['seats'] ?? '8') ?>"><label for="seats" class="active">Places</label></div>
+                <div class="input-field">
+                    <select name="status">
+                        <?php foreach ($statusLabels as $key => $label): ?>
+                            <option value="<?= $key ?>" <?= (int) ($edit['status'] ?? 0) === $key ? 'selected' : '' ?>><?= e($label) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label>Statut</label>
+                </div>
+                <button class="btn" type="submit">Enregistrer</button>
+            </form>
         </div>
-        <div class="row center-align">
-            <button class="btn" type="submit"><?= t('save') ?></button>
-        </div>
-    </form>
-
-    <p class="center-align" style="margin-top:20px;"><a href="dashboard.php" class="btn">Dashboard</a></p>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var elems = document.querySelectorAll('select');
-            M.FormSelect.init(elems);
-        });
-    </script>
-</body>
-</html>
+    </div>
+</div>
+<?php render_footer(); ?>

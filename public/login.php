@@ -1,43 +1,24 @@
 <?php
-session_start();
-require __DIR__ . '/lang.php';
-$email = $_POST['email'] ?? '';
+require_once dirname(__DIR__) . '/app/bootstrap.php';
+
+$email = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
-if (!$email || !$password) {
-    $_SESSION['login_error'] = t('error_required');
-    header('Location: index.php');
-    exit;
+
+if ($email === '' || $password === '') {
+    flash('error', 'Email / identifiant et mot de passe requis.');
+    redirect('index.php');
 }
-// Fetch all persons via the API
-$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$apiUrl = $scheme . '://' . $host . '/api/Person';
-$response = @file_get_contents($apiUrl);
-if ($response === false) {
-    $_SESSION['login_error'] = t('error_contact_api');
-    header('Location: index.php');
-    exit;
+
+$stmt = db()->prepare('SELECT * FROM Person WHERE lower(email) = lower(?) OR lower(username) = lower(?) LIMIT 1');
+$stmt->execute([$email, $email]);
+$user = $stmt->fetch();
+
+if (!$user || !password_verify($password, $user['password'])) {
+    flash('error', 'Identifiants invalides.');
+    redirect('index.php');
 }
-$persons = json_decode($response, true);
-$user = null;
-foreach ($persons as $p) {
-    if (isset($p['email']) && strtolower($p['email']) === strtolower($email)) {
-        $user = $p;
-        break;
-    }
-}
-if (!$user) {
-    $_SESSION['login_error'] = t('error_credentials');
-    header('Location: index.php');
-    exit;
-}
-$hash = $user['password'] ?? '';
-if (!password_verify($password, $hash) && $password !== $hash) {
-    $_SESSION['login_error'] = 'Invalid credentials';
-    $_SESSION['login_error'] = t('error_credentials');
-    header('Location: index.php');
-    exit;
-}
+
 $_SESSION['user_id'] = $user['id'];
-header('Location: dashboard.php');
-exit;
+save_journal((int) $user['id'], 'Connexion');
+flash('success', 'Connexion reussie.');
+redirect('dashboard.php');

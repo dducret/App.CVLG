@@ -1,5 +1,11 @@
 <?php
-session_start();
+require_once dirname(__DIR__) . '/app/bootstrap.php';
+
+if (!empty($_SESSION['user_id'])) {
+    save_journal((int) $_SESSION['user_id'], 'Deconnexion');
+}
+
 session_destroy();
-header('Location: index.php');
-exit;
+session_start();
+flash('success', 'Session fermee.');
+redirect('index.php');
