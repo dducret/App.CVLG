@@ -2,6 +2,9 @@
 require_once dirname(__DIR__) . '/app/bootstrap.php';
 
 $user = require_login();
+if (!is_admin_like($user) && !can_manage_journeys($user)) {
+    redirect('bookings.php');
+}
 
 $stats = [
     'Membres' => (int) fetch_value('SELECT COUNT(*) FROM Member'),
@@ -67,15 +70,6 @@ render_header('Tableau de bord', $user);
         </div>
     </div>
     <div class="col s12 l5">
-        <div class="soft-box">
-            <h5>Acces rapides</h5>
-            <p><a class="btn" href="bookings.php">Reserver une place</a></p>
-            <p><a class="btn blue-grey darken-1" href="tickets.php">Acheter des tickets</a></p>
-            <?php if (is_admin_like($user) || can_manage_journeys($user)): ?>
-                <p><a class="btn green darken-1" href="journeys.php">Gerer les remontees</a></p>
-                <p><a class="btn orange darken-2" href="dues.php">Gerer les cotisations</a></p>
-            <?php endif; ?>
-        </div>
         <div class="soft-box">
             <h5>Journal recent</h5>
             <ul class="collection">

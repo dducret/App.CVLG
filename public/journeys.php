@@ -61,10 +61,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_b
     $journeyId = (int) ($_POST['journey_id'] ?? 0);
     $memberId = (int) ($_POST['member_id'] ?? 0);
     $guestName = trim($_POST['guest_name'] ?? '');
-    $status = journey_reserved_count($journeyId) >= journey_capacity($journeyId) ? 'waitlist' : 'booked';
+    $decision = evaluate_booking_request($memberId, $journeyId, $guestName);
+    if (!$decision['allowed']) {
+        flash('error', $decision['message']);
+        redirect('journeys.php?view=' . $journeyId);
+    }
+
+    $status = $decision['status'];
     $pdo->prepare('INSERT INTO Booking(journey, member, status, guestName, qrCode) VALUES (?, ?, ?, ?, ?)')
         ->execute([$journeyId, $memberId, $status, $guestName ?: null, strtoupper(bin2hex(random_bytes(4)))]);
-    flash('success', $status === 'waitlist' ? 'Reservation ajoutee en attente.' : 'Reservation ajoutee.');
+    flash('success', $decision['message']);
     redirect('journeys.php?view=' . $journeyId);
 }
 

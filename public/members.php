@@ -212,7 +212,16 @@ render_header('Gestion des membres', $user);
                             <option value="<?= e($role) ?>" <?= $currentRole === $role ? 'selected' : '' ?>><?= e($role) ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <label>Role</label>
+                    <label><?= e(t('member_role', 'Role')) ?></label>
+                </div>
+                <div class="input-field">
+                    <?php $currentLanguage = $edit['language'] ?? 'fr'; ?>
+                    <select id="language" name="language">
+                        <?php foreach (supported_languages() as $code => $label): ?>
+                            <option value="<?= e($code) ?>" <?= $currentLanguage === $code ? 'selected' : '' ?>><?= e($label) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label for="language"><?= e(t('language', 'Langue')) ?></label>
                 </div>
                 <p><label><input type="checkbox" name="canBook" <?= !empty($edit['canBook']) || !$edit ? 'checked' : '' ?>><span>Peut reserver</span></label></p>
                 <div class="input-field"><input type="text" id="street" name="street" value="<?= e($edit['street'] ?? '') ?>"><label for="street" class="active">Rue</label></div>

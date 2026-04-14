@@ -7,5 +7,6 @@ if (!empty($_SESSION['user_id'])) {
 
 session_destroy();
 session_start();
-flash('success', 'Session fermee.');
+set_lang('fr');
+flash('success', t('flash_logout_success', 'Session fermee.'));
 redirect('index.php');

@@ -30,6 +30,8 @@ function db(): PDO
         initialize_database($pdo);
     }
 
+    ensure_demo_data($pdo);
+
     return $pdo;
 }
 
@@ -190,6 +192,11 @@ function seed_database(PDO $pdo): void
         'annual_fee_active' => '120',
         'annual_fee_supporter' => '30',
         'booking_window_days' => '3',
+        'booking_rule_same_time_block' => '1',
+        'booking_rule_daily_confirmed_limit' => '1',
+        'booking_rule_allow_waitlist_after_daily_limit' => '1',
+        'booking_rule_journey_waitlist_limit' => '3',
+        'booking_rule_daily_waitlist_limit' => '3',
     ];
 
     $settingsStmt = $pdo->prepare('INSERT INTO Settings(key, value) VALUES (?, ?)');
@@ -198,4 +205,159 @@ function seed_database(PDO $pdo): void
     }
 
     $pdo->commit();
+}
+
+function ensure_demo_data(PDO $pdo): void
+{
+    ensure_default_settings($pdo);
+    ensure_demo_member_can_book($pdo);
+    [$driverId, $vehicleId] = ensure_demo_driver_and_vehicle($pdo);
+    ensure_demo_april_journeys($pdo, $driverId, $vehicleId);
+}
+
+function ensure_default_settings(PDO $pdo): void
+{
+    $defaults = [
+        'booking_rule_same_time_block' => '1',
+        'booking_rule_daily_confirmed_limit' => '1',
+        'booking_rule_allow_waitlist_after_daily_limit' => '1',
+        'booking_rule_journey_waitlist_limit' => '3',
+        'booking_rule_daily_waitlist_limit' => '3',
+    ];
+    $stmt = $pdo->prepare('INSERT OR IGNORE INTO Settings(key, value) VALUES (?, ?)');
+    foreach ($defaults as $key => $value) {
+        $stmt->execute([$key, $value]);
+    }
+}
+
+function ensure_demo_member_can_book(PDO $pdo): void
+{
+    $memberId = (int) $pdo->query(
+        "SELECT Member.id
+         FROM Member
+         INNER JOIN Person ON Person.id = Member.person
+         WHERE Person.email = 'membre@cvlg.local'
+         LIMIT 1"
+    )->fetchColumn();
+
+    if ($memberId <= 0) {
+        return;
+    }
+
+    $currentYear = (int) date('Y');
+    $stmt = $pdo->prepare('SELECT id FROM YearFee WHERE year = ? AND type = ? LIMIT 1');
+    $stmt->execute([$currentYear, 'actif']);
+    $yearFeeId = (int) $stmt->fetchColumn();
+
+    if ($yearFeeId <= 0) {
+        $pdo->prepare('INSERT INTO YearFee(year, type, price) VALUES (?, ?, ?)')->execute([$currentYear, 'actif', 120]);
+        $yearFeeId = (int) $pdo->lastInsertId();
+    }
+
+    $existingDue = fetch_one('SELECT id FROM MemberYearFee WHERE member = ? AND yearFee = ?', [$memberId, $yearFeeId]);
+    if ($existingDue) {
+        $pdo->prepare("UPDATE MemberYearFee SET status = 'paid', date = COALESCE(date, ?), amount = CASE WHEN amount = 0 THEN 120 ELSE amount END, paymentMethod = COALESCE(paymentMethod, 'demo') WHERE id = ?")
+            ->execute([date('Y-m-d'), (int) $existingDue['id']]);
+    } else {
+        $pdo->prepare("INSERT INTO MemberYearFee(member, yearFee, date, status, amount, paymentMethod) VALUES (?, ?, ?, 'paid', ?, 'demo')")
+            ->execute([$memberId, $yearFeeId, date('Y-m-d'), 120]);
+    }
+
+    $stmt = $pdo->prepare(
+        "SELECT COALESCE(SUM(Ticket.quantity), 0)
+         FROM Ticket
+         INNER JOIN Person ON Person.id = Ticket.person
+         WHERE Person.email = 'membre@cvlg.local'"
+    );
+    $stmt->execute();
+    $ticketCount = (int) $stmt->fetchColumn();
+
+    if ($ticketCount <= 0) {
+        $personId = (int) $pdo->query("SELECT id FROM Person WHERE email = 'membre@cvlg.local' LIMIT 1")->fetchColumn();
+        if ($personId > 0) {
+            $pdo->prepare('INSERT INTO Ticket(person, quantity, price, date, used) VALUES (?, ?, ?, ?, 0)')
+                ->execute([$personId, 10, 90, date('Y-m-d')]);
+        }
+    }
+}
+
+function ensure_demo_driver_and_vehicle(PDO $pdo): array
+{
+    $driverId = (int) $pdo->query(
+        "SELECT Driver.id
+         FROM Driver
+         INNER JOIN Person ON Person.id = Driver.person
+         WHERE Person.email = 'logistique@cvlg.local'
+         LIMIT 1"
+    )->fetchColumn();
+
+    if ($driverId <= 0) {
+        $personId = (int) $pdo->query("SELECT id FROM Person WHERE email = 'logistique@cvlg.local' LIMIT 1")->fetchColumn();
+        if ($personId > 0) {
+            $pdo->prepare('INSERT INTO Driver(person, status) VALUES (?, 0)')->execute([$personId]);
+            $driverId = (int) $pdo->lastInsertId();
+        }
+    }
+
+    $vehicleId = (int) $pdo->query("SELECT id FROM Vehicule WHERE name = 'Navette principale' LIMIT 1")->fetchColumn();
+    if ($vehicleId <= 0) {
+        $pdo->prepare('INSERT INTO Vehicule(name, registration, label, seats, status) VALUES (?, ?, ?, ?, ?)')
+            ->execute(['Navette principale', 'GE-2025', 'Minibus club', 8, 0]);
+        $vehicleId = (int) $pdo->lastInsertId();
+    }
+
+    return [$driverId, $vehicleId];
+}
+
+function ensure_demo_april_journeys(PDO $pdo, int $driverId, int $vehicleId): void
+{
+    if ($driverId <= 0 || $vehicleId <= 0) {
+        return;
+    }
+
+    $year = (int) date('Y');
+    $slots = [
+        ['Navette 13h30', '13:30', '14:00'],
+        ['Navette 14h30', '14:30', '15:00'],
+        ['Navette 15h30', '15:30', '16:00'],
+        ['Navette 15h30 bis', '15:30', '16:15'],
+        ['Navette 17h30', '17:30', '18:00'],
+    ];
+    $allowedWeekdays = [3, 5, 6, 7];
+    $creatorId = (int) $pdo->query("SELECT id FROM Person WHERE email = 'admin@cvlg.local' LIMIT 1")->fetchColumn();
+    $insertStmt = $pdo->prepare(
+        'INSERT INTO Journey(driver, vehicule, Label, kind, dateFrom, dateTo, timeStart, timeEnd, createdBy, notes)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    );
+    $existsStmt = $pdo->prepare(
+        'SELECT id FROM Journey WHERE dateFrom = ? AND timeStart = ? AND Label = ? LIMIT 1'
+    );
+
+    $cursor = new DateTimeImmutable(sprintf('%d-04-01', $year));
+    $end = new DateTimeImmutable(sprintf('%d-04-30', $year));
+
+    while ($cursor <= $end) {
+        $weekday = (int) $cursor->format('N');
+        if (in_array($weekday, $allowedWeekdays, true)) {
+            foreach ($slots as $index => [$label, $timeStart, $timeEnd]) {
+                $date = $cursor->format('Y-m-d');
+                $existsStmt->execute([$date, $timeStart, $label]);
+                if (!$existsStmt->fetchColumn()) {
+                    $insertStmt->execute([
+                        $driverId,
+                        $vehicleId,
+                        $label,
+                        'club',
+                        $date,
+                        $date,
+                        $timeStart,
+                        $timeEnd,
+                        $creatorId ?: null,
+                        $index === 2 ? 'Rotation reguliere club' : 'Navette de demonstration',
+                    ]);
+                }
+            }
+        }
+        $cursor = $cursor->modify('+1 day');
+    }
 }
