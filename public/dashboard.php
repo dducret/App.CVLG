@@ -8,8 +8,8 @@ if (!is_admin_like($user) && !can_manage_journeys($user)) {
 
 $stats = [
     'Membres' => (int) fetch_value('SELECT COUNT(*) FROM Member'),
-    'Remontees a venir' => (int) fetch_value("SELECT COUNT(*) FROM Journey WHERE dateFrom >= date('now') AND ended = 0"),
-    'Cotisations impayees' => (int) fetch_value("SELECT COUNT(*) FROM MemberYearFee WHERE status != 'paid'"),
+    'Remontées à venir' => (int) fetch_value("SELECT COUNT(*) FROM Journey WHERE dateFrom >= date('now') AND ended = 0"),
+    'Cotisations impayées' => (int) fetch_value("SELECT COUNT(*) FROM MemberYearFee WHERE status != 'paid'"),
     'Tickets vendus' => (int) fetch_value('SELECT COALESCE(SUM(quantity), 0) FROM Ticket'),
 ];
 
@@ -46,14 +46,14 @@ render_header('Tableau de bord', $user);
 <div class="row">
     <div class="col s12 l7">
         <div class="soft-box">
-            <h5>Prochaines remontees</h5>
+            <h5>Prochaines remontées</h5>
             <table class="striped">
                 <thead>
                 <tr>
-                    <th>Libelle</th>
+                    <th>Libellé</th>
                     <th>Date</th>
                     <th>Heure</th>
-                    <th>Vehicule</th>
+                    <th>Véhicule</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -71,12 +71,12 @@ render_header('Tableau de bord', $user);
     </div>
     <div class="col s12 l5">
         <div class="soft-box">
-            <h5>Journal recent</h5>
+            <h5>Journal récent</h5>
             <ul class="collection">
                 <?php foreach ($recentJournal as $entry): ?>
                     <li class="collection-item">
                         <strong><?= e($entry['label']) ?></strong><br>
-                        <small><?= e(($entry['firstName'] ?? 'Systeme') . ' ' . ($entry['lastName'] ?? '')) ?> - <?= e($entry['timestamp']) ?></small>
+                        <small><?= e(($entry['firstName'] ?? 'Système') . ' ' . ($entry['lastName'] ?? '')) ?> - <?= e($entry['timestamp']) ?></small>
                     </li>
                 <?php endforeach; ?>
             </ul>

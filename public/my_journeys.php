@@ -31,7 +31,7 @@ render_header('Mon historique', $user);
                     <li class="collection-item">
                         <strong><?= e($booking['Label']) ?></strong><br>
                         <?= e(format_date($booking['dateFrom'])) ?> - <?= e($booking['timeStart']) ?><br>
-                        <span class="pill"><?= e($booking['status']) ?></span>
+                        <span class="pill"><?= e(translate_status($booking['status'])) ?></span>
                         <code><?= e($booking['qrCode']) ?></code>
                     </li>
                 <?php endforeach; ?>
@@ -46,7 +46,7 @@ render_header('Mon historique', $user);
                     <li class="collection-item">
                         <strong><?= e($booking['Label']) ?></strong><br>
                         <?= e(format_date($booking['dateFrom'])) ?> - <?= e($booking['timeStart']) ?><br>
-                        <span class="pill"><?= e($booking['status']) ?></span>
+                        <span class="pill"><?= e(translate_status($booking['status'])) ?></span>
                     </li>
                 <?php endforeach; ?>
             </ul>

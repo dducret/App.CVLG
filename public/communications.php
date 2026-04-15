@@ -223,7 +223,7 @@ render_header('Communication', $user, [
                             <?php endif; ?>
                         </td>
                         <td><?= e($audienceOptions[$message['audience'] ?: 'all'] ?? (string) $message['audience']) ?></td>
-                        <td><?= e($message['status']) ?></td>
+                        <td><?= e(translate_status($message['status'])) ?></td>
                         <td><?= e((string) $recipientCount) ?></td>
                         <td><?= e((string) $message['attachmentCount']) ?></td>
                         <td><?= e($message['sent'] ?: '-') ?></td>

@@ -88,7 +88,7 @@ render_header('Mes cotisations', $user);
                     <tr>
                         <td><?= e((string) $due['year']) ?></td>
                         <td><?= e(format_money($due['amount'])) ?></td>
-                        <td><?= e($due['status']) ?></td>
+                        <td><?= e(translate_status($due['status'])) ?></td>
                         <td><?= e($due['paymentMethod'] ?: '-') ?> <?= $due['date'] ? '(' . e(format_date($due['date'])) . ')' : '' ?></td>
                         <td>
                             <?php if ($due['status'] !== 'paid' && $stripeEnabled): ?>
@@ -117,7 +117,7 @@ render_header('Mes cotisations', $user);
                     <tr>
                         <td><?= e(format_datetime($payment['createdAt'])) ?></td>
                         <td><?= e(format_money($payment['amount'])) ?></td>
-                        <td><?= e($payment['status']) ?></td>
+                        <td><?= e(translate_status($payment['status'])) ?></td>
                     </tr>
                 <?php endforeach; ?>
                 <?php if (!$recentPayments): ?>

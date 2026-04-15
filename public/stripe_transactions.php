@@ -62,7 +62,7 @@ render_header('Paiements Stripe', $user);
                             <?php endif; ?>
                         </td>
                         <td><?= e(format_money($payment['amount'], (string) ($payment['currency'] ?: stripe_currency()))) ?></td>
-                        <td><?= e($payment['status']) ?></td>
+                        <td><?= e(translate_status($payment['status'])) ?></td>
                         <td><?= e($payment['providerSessionId'] ?: '-') ?></td>
                     </tr>
                 <?php endforeach; ?>
@@ -83,7 +83,7 @@ render_header('Paiements Stripe', $user);
                     <tr>
                         <td><?= e(format_datetime(date('Y-m-d H:i:s', (int) ($session['created'] ?? time())))) ?></td>
                         <td><?= e(format_money(stripe_amount_from_minor_units((int) ($session['amount_total'] ?? 0), (string) ($session['currency'] ?? stripe_currency())), (string) ($session['currency'] ?? stripe_currency()))) ?></td>
-                        <td><?= e((string) ($session['payment_status'] ?? $session['status'] ?? '-')) ?></td>
+                        <td><?= e(translate_status((string) ($session['payment_status'] ?? $session['status'] ?? '-'))) ?></td>
                     </tr>
                 <?php endforeach; ?>
                 <?php if (!$remoteSessions): ?>

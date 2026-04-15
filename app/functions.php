@@ -208,29 +208,40 @@ function setting_bool(string $key, bool $default = false): bool
     return setting($key, $default ? '1' : '0') === '1';
 }
 
+function translate_status(?string $status): string
+{
+    $normalized = strtolower(trim((string) $status));
+    if ($normalized === '') {
+        return '-';
+    }
+
+    $key = 'status_' . preg_replace('/[^a-z0-9]+/', '_', $normalized);
+    return t($key, (string) $status);
+}
+
 function booking_rule_definitions(): array
 {
     return [
         'booking_rule_same_time_block' => [
-            'label' => 'Bloquer deux reservations a la meme heure',
+            'label' => 'Bloquer deux réservations à la même heure',
             'type' => 'boolean',
             'default' => '1',
-            'help' => 'Un membre ne peut pas etre inscrit sur deux navettes ayant la meme date et la meme heure.',
+            'help' => 'Un membre ne peut pas être inscrit sur deux navettes ayant la même date et la même heure.',
         ],
         'booking_rule_daily_confirmed_limit' => [
-            'label' => 'Nombre maximal de reservations fermes par jour',
+            'label' => 'Nombre maximal de réservations fermes par jour',
             'type' => 'number',
             'default' => '1',
-            'help' => 'Au dela de cette limite, une nouvelle demande passe en liste d attente.',
+            'help' => 'Au-delà de cette limite, une nouvelle demande passe en liste d’attente.',
         ],
         'booking_rule_allow_waitlist_after_daily_limit' => [
-            'label' => 'Autoriser la liste d attente apres la limite de reservation ferme',
+            'label' => 'Autoriser la liste d’attente après la limite de réservation ferme',
             'type' => 'boolean',
             'default' => '1',
-            'help' => 'Si active, une autre navette le meme jour reste possible mais uniquement en attente.',
+            'help' => 'Si activé, une autre navette le même jour reste possible mais uniquement en attente.',
         ],
         'booking_rule_journey_waitlist_limit' => [
-            'label' => 'Taille maximale de la liste d attente par navette',
+            'label' => 'Taille maximale de la liste d’attente par navette',
             'type' => 'number',
             'default' => '3',
             'help' => 'Nombre maximal de membres en attente sur une navette.',
@@ -239,7 +250,7 @@ function booking_rule_definitions(): array
             'label' => 'Nombre maximal de navettes en attente par membre et par jour',
             'type' => 'number',
             'default' => '3',
-            'help' => 'Limite le nombre de navettes en liste d attente sur une meme journee.',
+            'help' => 'Limite le nombre de navettes en liste d’attente sur une même journée.',
         ],
     ];
 }

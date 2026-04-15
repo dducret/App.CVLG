@@ -175,7 +175,7 @@ render_header('Gestion des remontees', $user);
                             <?php foreach ($bookings as $booking): ?>
                                 <tr>
                                     <td><?= e($booking['firstName'] . ' ' . $booking['lastName']) ?></td>
-                                    <td><?= e($booking['status']) ?></td>
+                                    <td><?= e(translate_status($booking['status'])) ?></td>
                                     <td><?= e($booking['guestName'] ?: '-') ?></td>
                                     <td><code><?= e($booking['qrCode']) ?></code></td>
                                     <td><?php if ($booking['status'] !== 'validated'): ?><a class="btn-small" href="?view=<?= (int) $view['id'] ?>&validate_booking=<?= (int) $booking['id'] ?>">Valider</a><?php endif; ?></td>

@@ -6,9 +6,9 @@ function navigation_links(array $user): array
         'dashboard.php' => t('nav_dashboard', 'Tableau de bord'),
         'members.php' => t('nav_members', 'Membres'),
         'dues.php' => t('nav_dues', 'Cotisations'),
-        'journeys.php' => t('nav_journeys', 'Remontees'),
+        'journeys.php' => t('nav_journeys', 'Remontées'),
         'drivers.php' => t('nav_drivers', 'Chauffeurs'),
-        'vehicles.php' => t('nav_vehicles', 'Vehicules'),
+        'vehicles.php' => t('nav_vehicles', 'Véhicules'),
         'managers.php' => t('nav_managers', 'Managers'),
         'configuration.php' => t('nav_configuration', 'Configuration'),
         'stripe_transactions.php' => 'Paiements Stripe',
@@ -23,12 +23,18 @@ function navigation_links(array $user): array
         'profile.php' => t('nav_profile', 'Mon profil'),
         'my_dues.php' => t('nav_my_dues', 'Mes cotisations'),
         'tickets.php' => t('nav_tickets', 'Mes tickets'),
-        'bookings.php' => t('nav_bookings', 'Reservations'),
+        'bookings.php' => t('nav_bookings', 'Réservations'),
         'my_journeys.php' => t('nav_my_journeys', 'Mon historique'),
     ];
 
     if (is_admin_like($user) || can_manage_journeys($user)) {
-        unset($memberLinks['my_dues.php'], $memberLinks['tickets.php']);
+        unset(
+            $memberLinks['profile.php'],
+            $memberLinks['my_dues.php'],
+            $memberLinks['tickets.php'],
+            $memberLinks['bookings.php'],
+            $memberLinks['my_journeys.php']
+        );
 
         return $adminLinks + $memberLinks;
     }
@@ -132,7 +138,7 @@ function render_header(string $title, array $user, array $options = []): void
             <?php foreach ($nav as $href => $label): ?>
                 <li><a class="<?= $current === $href ? 'active' : '' ?>" href="<?= e($href) ?>"><?= e($label) ?></a></li>
             <?php endforeach; ?>
-            <li><a href="logout.php"><?= e(t('logout', 'Deconnexion')) ?></a></li>
+            <li><a href="logout.php"><?= e(t('logout', 'Déconnexion')) ?></a></li>
         </ul>
     </div>
 </nav>
@@ -140,7 +146,7 @@ function render_header(string $title, array $user, array $options = []): void
     <?php foreach ($nav as $href => $label): ?>
         <li><a class="<?= $current === $href ? 'active' : '' ?>" href="<?= e($href) ?>"><?= e($label) ?></a></li>
     <?php endforeach; ?>
-    <li><a href="logout.php"><?= e(t('logout', 'Deconnexion')) ?></a></li>
+    <li><a href="logout.php"><?= e(t('logout', 'Déconnexion')) ?></a></li>
 </ul>
 <main class="container">
     <div class="soft-box">

@@ -45,12 +45,12 @@ render_header('Exports CSV', $user);
                     <select name="export_type">
                         <option value="members">Membres</option>
                         <option value="dues">Cotisations</option>
-                        <option value="bookings">Reservations</option>
+                        <option value="bookings">Réservations</option>
                         <option value="payments">Tickets / paiements</option>
                     </select>
                     <label>Type d'export</label>
                 </div>
-                <button class="btn" type="submit">Generer le CSV</button>
+                <button class="btn" type="submit">Générer le CSV</button>
             </form>
         </div>
     </div>

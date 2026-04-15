@@ -89,7 +89,7 @@ render_header('Gestion des cotisations', $user);
                         <td><?= e($due['firstName'] . ' ' . $due['lastName']) ?></td>
                         <td><?= e($due['type']) ?></td>
                         <td><?= e(format_money($due['amount'])) ?></td>
-                        <td><?= e($due['status']) ?></td>
+                        <td><?= e(translate_status($due['status'])) ?></td>
                         <td><?= e($due['paymentMethod'] ?: '-') ?> <?= $due['date'] ? '(' . e(format_date($due['date'])) . ')' : '' ?></td>
                         <td><?php if ($due['status'] !== 'paid'): ?><a class="btn-small green" href="?year=<?= $year ?>&collect=<?= (int) $due['id'] ?>">Encaisser</a><?php endif; ?></td>
                     </tr>

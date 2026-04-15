@@ -8,21 +8,21 @@ $generalKeys = [
     'ticket_price' => 'Prix du ticket',
     'annual_fee_active' => 'Cotisation actif',
     'annual_fee_supporter' => 'Cotisation sympathisant',
-    'booking_window_days' => 'Fenetre de reservation (jours)',
+    'booking_window_days' => 'Fenêtre de réservation (jours)',
 ];
 $smtpKeys = [
     'smtp_host' => ['label' => 'Serveur SMTP', 'type' => 'text', 'help' => 'Nom DNS ou IP du serveur SMTP.'],
-    'smtp_port' => ['label' => 'Port SMTP', 'type' => 'number', 'help' => 'Port TLS explicite, 587 par defaut.'],
-    'smtp_username' => ['label' => 'Utilisateur SMTP', 'type' => 'text', 'help' => 'Compte utilise pour l authentification SMTP.'],
+    'smtp_port' => ['label' => 'Port SMTP', 'type' => 'number', 'help' => 'Port TLS explicite, 587 par défaut.'],
+    'smtp_username' => ['label' => 'Utilisateur SMTP', 'type' => 'text', 'help' => 'Compte utilisé pour l’authentification SMTP.'],
     'smtp_password' => ['label' => 'Mot de passe SMTP', 'type' => 'password', 'help' => 'Mot de passe du compte SMTP.'],
-    'smtp_from_email' => ['label' => 'Email expediteur', 'type' => 'email', 'help' => 'Adresse From utilisee pour l envoi.'],
-    'smtp_from_name' => ['label' => 'Nom expediteur', 'type' => 'text', 'help' => 'Nom affiche dans le client email.'],
-    'smtp_reply_to' => ['label' => 'Reply-To', 'type' => 'email', 'help' => 'Optionnel. Adresse de reponse si differente de l expediteur.'],
+    'smtp_from_email' => ['label' => 'Email expéditeur', 'type' => 'email', 'help' => 'Adresse From utilisée pour l’envoi.'],
+    'smtp_from_name' => ['label' => 'Nom expéditeur', 'type' => 'text', 'help' => 'Nom affiché dans le client email.'],
+    'smtp_reply_to' => ['label' => 'Reply-To', 'type' => 'email', 'help' => 'Optionnel. Adresse de réponse si différente de l’expéditeur.'],
 ];
 $stripeKeys = [
-    'app_base_url' => ['label' => 'URL publique de l application', 'type' => 'url', 'help' => 'URL absolue utilisee pour les retours Stripe, par exemple https://club.exemple.ch.'],
-    'stripe_publishable_key' => ['label' => 'Cle publique Stripe', 'type' => 'text', 'help' => 'Commence generalement par pk_.'],
-    'stripe_secret_key' => ['label' => 'Cle secrete Stripe', 'type' => 'password', 'help' => 'Commence generalement par sk_. Utilisee cote serveur.'],
+    'app_base_url' => ['label' => 'URL publique de l’application', 'type' => 'url', 'help' => 'URL absolue utilisée pour les retours Stripe, par exemple https://club.exemple.ch.'],
+    'stripe_publishable_key' => ['label' => 'Clé publique Stripe', 'type' => 'text', 'help' => 'Commence généralement par pk_.'],
+    'stripe_secret_key' => ['label' => 'Clé secrète Stripe', 'type' => 'password', 'help' => 'Commence généralement par sk_. Utilisée côté serveur.'],
     'stripe_currency' => ['label' => 'Devise Stripe', 'type' => 'text', 'help' => 'Devise ISO en minuscules, par exemple chf ou eur.'],
 ];
 $bookingRules = booking_rule_definitions();
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         db()->prepare('INSERT INTO Settings(key, value) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value')
             ->execute([$key, $value]);
     }
-    flash('success', 'Configuration enregistree.');
+    flash('success', 'Configuration enregistrée.');
     redirect('configuration.php');
 }
 
@@ -63,7 +63,7 @@ render_header('Configuration', $user);
     <div class="col s12 l8">
         <div class="soft-box">
             <form method="post">
-                <h5>Parametres generaux</h5>
+                <h5>Paramètres généraux</h5>
                 <?php foreach ($generalKeys as $key => $label): ?>
                     <div class="input-field">
                         <input type="text" id="<?= e($key) ?>" name="<?= e($key) ?>" value="<?= e(setting($key, '')) ?>">
@@ -71,7 +71,7 @@ render_header('Configuration', $user);
                     </div>
                 <?php endforeach; ?>
                 <h5 style="margin-top: 32px;">Email SMTP</h5>
-                <p>Configuration du compte expediteur pour l envoi effectif depuis la page communication en TLS sur le port 587 par defaut.</p>
+                <p>Configuration du compte expéditeur pour l’envoi effectif depuis la page communication en TLS sur le port 587 par défaut.</p>
                 <?php foreach ($smtpKeys as $key => $meta): ?>
                     <div class="input-field">
                         <input
@@ -86,7 +86,7 @@ render_header('Configuration', $user);
                     </div>
                 <?php endforeach; ?>
                 <h5 style="margin-top: 32px;">Paiements Stripe</h5>
-                <p>Activez Stripe pour les achats de tickets et le paiement des cotisations membres. L URL publique doit etre accessible depuis Internet pour que Stripe puisse rediriger l utilisateur apres paiement.</p>
+                <p>Activez Stripe pour les achats de tickets et le paiement des cotisations membres. L’URL publique doit être accessible depuis Internet pour que Stripe puisse rediriger l’utilisateur après paiement.</p>
                 <p>
                     <label>
                         <input type="checkbox" name="stripe_enabled" <?= setting('stripe_enabled', '0') === '1' ? 'checked' : '' ?>>
@@ -105,8 +105,8 @@ render_header('Configuration', $user);
                         <span class="helper-text"><?= e($meta['help']) ?></span>
                     </div>
                 <?php endforeach; ?>
-                <h5 style="margin-top: 32px;">Regles de reservation</h5>
-                <p>Ces parametres permettent d'ajuster le comportement des reservations et de la liste d'attente.</p>
+                <h5 style="margin-top: 32px;">Règles de réservation</h5>
+                <p>Ces paramètres permettent d'ajuster le comportement des réservations et de la liste d'attente.</p>
                 <?php foreach ($bookingRules as $key => $rule): ?>
                     <?php $currentValue = setting($key, $rule['default']); ?>
                     <?php if ($rule['type'] === 'boolean'): ?>

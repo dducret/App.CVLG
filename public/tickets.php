@@ -78,7 +78,7 @@ render_header('Mes tickets', $user);
                     <tr>
                         <td><?= e(format_datetime($payment['createdAt'])) ?></td>
                         <td><?= e(format_money($payment['amount'])) ?></td>
-                        <td><?= e($payment['status']) ?></td>
+                        <td><?= e(translate_status($payment['status'])) ?></td>
                     </tr>
                 <?php endforeach; ?>
                 <?php if (!$recentPayments): ?>

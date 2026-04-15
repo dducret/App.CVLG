@@ -62,7 +62,7 @@ $brandingFavicon = 'assets/images/branding/favicon.ico';
                 <span><?= e(t('login_side_title', 'CVLG')) ?></span>
             </div>
             <p><?= e(t('login_side_description_1', 'Version PHP de l\'application de gestion du club de vol libre.')) ?></p>
-            <p><?= e(t('login_side_description_2', 'Cette base couvre l\'administration, les cotisations, les remontees, les tickets et les reservations membres.')) ?></p>
+            <p><?= e(t('login_side_description_2', 'Cette base couvre l\'administration, les cotisations, les remontées, les tickets et les réservations membres.')) ?></p>
             <div class="credentials">
                 <p><?= e(t('demo_accounts', 'Comptes de demo :')) ?></p>
                 <p><code>admin@cvlg.local / admin123</code></p>
