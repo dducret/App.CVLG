@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('drivers.php');
 }
 
-$drivers = fetch_all('SELECT Driver.id, Driver.status, Driver.person, Person.firstName, Person.lastName FROM Driver INNER JOIN Person ON Person.id = Driver.person ORDER BY Person.lastName, Person.firstName');
+$drivers = fetch_all('SELECT Driver.id, Driver.status, Driver.person, Person.firstName, Person.lastName, Person.mobile FROM Driver INNER JOIN Person ON Person.id = Driver.person ORDER BY Person.lastName, Person.firstName');
 $members = fetch_all('SELECT Member.person, Person.firstName || " " || Person.lastName AS name FROM Member INNER JOIN Person ON Person.id = Member.person ORDER BY Person.lastName, Person.firstName');
 $edit = isset($_GET['edit']) ? fetch_one('SELECT * FROM Driver WHERE id = ?', [(int) $_GET['edit']]) : null;
 
@@ -33,11 +33,12 @@ render_header('Gestion des chauffeurs', $user);
     <div class="col s12 l7">
         <div class="soft-box">
             <table class="striped">
-                <thead><tr><th>Chauffeur</th><th>Statut</th><th></th></tr></thead>
+                <thead><tr><th>Chauffeur</th><th>Mobile</th><th>Statut</th><th></th></tr></thead>
                 <tbody>
                 <?php foreach ($drivers as $driver): ?>
                     <tr>
                         <td><?= e($driver['firstName'] . ' ' . $driver['lastName']) ?></td>
+                        <td><?= e($driver['mobile'] ?: '-') ?></td>
                         <td><?= e($statusMap[$driver['status']] ?? (string) $driver['status']) ?></td>
                         <td class="right-align">
                             <a class="btn-small" href="?edit=<?= (int) $driver['id'] ?>">Editer</a>
