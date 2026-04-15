@@ -30,6 +30,7 @@ function db(): PDO
         initialize_database($pdo);
     }
 
+    ensure_schema_updates($pdo);
     ensure_demo_data($pdo);
 
     return $pdo;
@@ -48,6 +49,50 @@ function initialize_database(PDO $pdo): void
     $schema = file_get_contents(__DIR__ . '/schema.sql');
     $pdo->exec($schema);
     seed_database($pdo);
+}
+
+function column_exists(PDO $pdo, string $table, string $column): bool
+{
+    $stmt = $pdo->query(sprintf('PRAGMA table_info("%s")', str_replace('"', '""', $table)));
+    $columns = $stmt ? $stmt->fetchAll() : [];
+
+    foreach ($columns as $info) {
+        if (($info['name'] ?? null) === $column) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function ensure_schema_updates(PDO $pdo): void
+{
+    $messageColumns = [
+        'audience' => "ALTER TABLE Message ADD COLUMN audience TEXT DEFAULT 'all'",
+        'extraRecipients' => "ALTER TABLE Message ADD COLUMN extraRecipients TEXT",
+        'smtpError' => "ALTER TABLE Message ADD COLUMN smtpError TEXT",
+        'recipientEmails' => "ALTER TABLE Message ADD COLUMN recipientEmails TEXT",
+        'updatedAt' => "ALTER TABLE Message ADD COLUMN updatedAt TEXT",
+    ];
+
+    foreach ($messageColumns as $column => $sql) {
+        if (!column_exists($pdo, 'Message', $column)) {
+            $pdo->exec($sql);
+        }
+    }
+
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS MessageAttachment (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            message INTEGER NOT NULL,
+            originalName TEXT NOT NULL,
+            storedName TEXT NOT NULL,
+            mimeType TEXT,
+            size INTEGER NOT NULL DEFAULT 0,
+            createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(message) REFERENCES Message(id) ON DELETE CASCADE
+        )'
+    );
 }
 
 function seed_database(PDO $pdo): void
@@ -223,6 +268,13 @@ function ensure_default_settings(PDO $pdo): void
         'booking_rule_allow_waitlist_after_daily_limit' => '1',
         'booking_rule_journey_waitlist_limit' => '3',
         'booking_rule_daily_waitlist_limit' => '3',
+        'smtp_host' => '',
+        'smtp_port' => '587',
+        'smtp_username' => '',
+        'smtp_password' => '',
+        'smtp_from_email' => '',
+        'smtp_from_name' => 'CVLG',
+        'smtp_reply_to' => '',
     ];
     $stmt = $pdo->prepare('INSERT OR IGNORE INTO Settings(key, value) VALUES (?, ?)');
     foreach ($defaults as $key => $value) {

@@ -177,8 +177,24 @@ CREATE TABLE IF NOT EXISTS Message (
     checked TEXT,
     status TEXT NOT NULL DEFAULT 'draft',
     recipients TEXT,
+    audience TEXT DEFAULT 'all',
+    extraRecipients TEXT,
+    smtpError TEXT,
+    recipientEmails TEXT,
+    updatedAt TEXT,
     FOREIGN KEY(content) REFERENCES Content(id),
     FOREIGN KEY(msgFrom) REFERENCES Person(id)
+);
+
+CREATE TABLE IF NOT EXISTS MessageAttachment (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    message INTEGER NOT NULL,
+    originalName TEXT NOT NULL,
+    storedName TEXT NOT NULL,
+    mimeType TEXT,
+    size INTEGER NOT NULL DEFAULT 0,
+    createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(message) REFERENCES Message(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Settings (
