@@ -5,13 +5,15 @@ Application PHP de gestion pour le Club de Vol Libre Geneve, construite a partir
 ## Perimetre implemente
 
 - Authentification locale avec comptes de demonstration
-- Tableau de bord
-- Gestion des membres
-- Gestion des chauffeurs, managers et vehicules
+- Interface multilingue (fr, en, de, es, it)
+- Tableau de bord operationnel avec journal recent
+- Gestion des membres, chauffeurs, managers et vehicules
 - Gestion des cotisations et generation annuelle
-- Gestion des remontees et reservations
+- Gestion des remontees, reservations et liste d attente
 - Espace membre: profil, cotisations, tickets, reservations, historique
-- Communication interne avec brouillons / envois traces
+- Paiements Stripe pour les tickets et les cotisations membres
+- Suivi des transactions Stripe locales et distantes
+- Communication email SMTP avec brouillons, audiences, destinataires supplementaires et pieces jointes
 - Exports CSV
 - API lecture seule sur les principales tables
 
@@ -26,6 +28,14 @@ Application PHP de gestion pour le Club de Vol Libre Geneve, construite a partir
 La base est initialisee automatiquement dans `db/appcvlg_v3.sqlite`.
 
 Dans cet environnement Windows sandbox, SQLite doit utiliser son journal en memoire; ce parametrage est deja applique dans `app/db.php`.
+
+Les principaux objets metier couvrent notamment:
+
+- membres et roles (`Person`, `Member`, `Driver`, `Manager`)
+- remontees et reservations (`Journey`, `Booking`, `Vehicule`)
+- cotisations et paiements (`YearFee`, `MemberYearFee`, `Payment`, `Ticket`)
+- communication (`Content`, `Message`, `MessageAttachment`)
+- configuration applicative (`Settings`)
 
 ## Comptes de demonstration
 
@@ -43,6 +53,39 @@ php -S localhost:8000 -t public
 ```
 
 Puis ouvrir `http://localhost:8000`.
+
+## Configuration importante
+
+La page `Configuration` permet de piloter:
+
+- les parametres generaux du club
+- les regles de reservation et de liste d attente
+- la configuration SMTP d envoi
+- l activation et les cles Stripe
+
+Pour activer Stripe, renseigner au minimum:
+
+- `app_base_url`
+- `stripe_publishable_key`
+- `stripe_secret_key`
+- `stripe_currency`
+
+Pour activer l envoi email SMTP, renseigner au minimum:
+
+- `smtp_host`
+- `smtp_port`
+- `smtp_username`
+- `smtp_password`
+- `smtp_from_email`
+
+## Documentation utilisateur
+
+Les manuels maintenables se trouvent dans `Documentation/manuals/`:
+
+- anglais: `Documentation/manuals/en/`
+- francais: `Documentation/manuals/fr/`
+
+Ils couvrent les parcours membre, logistique et administrateur pour l etat actuel de l application.
 
 ## API
 

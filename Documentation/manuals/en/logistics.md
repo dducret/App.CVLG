@@ -12,7 +12,8 @@ This guide is for logistics users who manage shuttle operations. In the current 
 - `Journeys`: create and operate shuttles.
 - `Drivers`: maintain the driver list and driver status.
 - `Vehicles`: maintain vehicle records and seat capacity.
-- `My profile`, `Bookings`, and `My history`: personal user tools remain available.
+- `Managers`: visible for admin-like logistics profiles only.
+- `Configuration`, `Stripe payments`, and `Exports`: visible for admin-like logistics profiles only.
 
 ## Dashboard
 
@@ -92,6 +93,8 @@ They can:
 - Create a member
 - Delete a member
 - Enable or disable booking permission
+- Set the role code
+- Set the preferred language
 - Add a license while editing
 
 ## Dues
@@ -107,6 +110,7 @@ They can:
 Current behavior:
 
 - Collected dues are marked with a cash payment method on this screen.
+- Member self-service Stripe payments also appear in the payment records used by the application.
 
 ## Operational Booking Notes
 
@@ -119,3 +123,4 @@ Current behavior:
 - Assign the correct vehicle before operations, because seat count drives booking capacity.
 - Review waitlist status before validating attendance.
 - Ending a journey closes its operational lifecycle in the current build.
+- Standard logistics navigation does not expose the member self-service pages in the main menu.

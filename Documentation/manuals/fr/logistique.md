@@ -12,7 +12,8 @@ Ce guide s'adresse aux utilisateurs logistiques qui gerent l'exploitation des na
 - `Remontees` : creer et exploiter les navettes.
 - `Chauffeurs` : maintenir la liste des chauffeurs et leur statut.
 - `Vehicules` : maintenir les vehicules et leur capacite.
-- `Mon profil`, `Reservations` et `Mon historique` : outils personnels toujours disponibles.
+- `Managers` : visible uniquement pour les profils logistiques de type administrateur.
+- `Configuration`, `Paiements Stripe` et `Exports` : visibles uniquement pour les profils logistiques de type administrateur.
 
 ## Tableau de bord
 
@@ -92,6 +93,8 @@ Ils peuvent :
 - Creer un membre
 - Supprimer un membre
 - Activer ou desactiver le droit de reserver
+- Definir le code role
+- Definir la langue preferee
 - Ajouter une licence pendant l'edition
 
 ## Cotisations
@@ -107,6 +110,7 @@ Ils peuvent :
 Comportement actuel :
 
 - Une cotisation encaissee est marquee avec un mode de paiement `cash` sur cet ecran.
+- Les paiements Stripe realises par les membres alimentent aussi les enregistrements de paiement utilises par l'application.
 
 ## Notes sur les reservations operationnelles
 
@@ -119,3 +123,4 @@ Comportement actuel :
 - Affecter le bon vehicule avant l'exploitation, car le nombre de places pilote la capacite.
 - Verifier les statuts en liste d'attente avant de valider la presence.
 - Terminer une remontee ferme son cycle operationnel dans la version actuelle.
+- La navigation logistique standard n'expose pas les pages membres en libre-service dans le menu principal.

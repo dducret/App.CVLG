@@ -7,8 +7,8 @@ This guide is for standard members using the member-facing area of CVLG.
 ## Main Navigation
 
 - `My profile`: update personal details, language, address, and password.
-- `My dues`: review yearly dues and mark a due as paid in the current build.
-- `My tickets`: buy ticket packs and review ticket purchases.
+- `My dues`: review yearly dues and pay unpaid dues with Stripe when enabled.
+- `My tickets`: buy ticket packs with Stripe and review ticket purchases.
 - `Bookings`: reserve or cancel upcoming shuttle seats.
 - `My history`: review upcoming and past bookings.
 
@@ -42,11 +42,13 @@ Use `My dues` to:
 
 - View yearly dues by year
 - See amount, status, payment method, and payment date
-- Use the `Pay` action on unpaid dues
+- Use `Pay with Stripe` on unpaid dues when Stripe is enabled
 
 Current behavior:
 
-- The `Pay` button marks the due as paid with a simulated payment method.
+- Successful Stripe checkout marks the due as paid with payment method `stripe`.
+- The page also shows the recent Stripe payment history for membership fees.
+- If Stripe is not configured, the payment action is unavailable.
 
 ## My Tickets
 
@@ -54,12 +56,14 @@ Use `My tickets` to:
 
 - See the unit ticket price
 - See your remaining available rides
-- Buy a new ticket pack by quantity
+- Buy a new ticket pack by quantity through Stripe
 - Review past ticket purchases
+- Review recent Stripe payment attempts for ticket purchases
 
 Important:
 
 - Bookings depend on available remaining rides.
+- A successful Stripe checkout creates the ticket pack automatically in the application.
 
 ## Bookings
 
@@ -79,6 +83,7 @@ The page also shows:
 - Remaining free seats per shuttle
 - Driver and vehicle when assigned
 - Your own booking state: reserved or waitlist
+- A modal confirmation step before creating a booking
 
 ## Booking Rules
 
@@ -96,7 +101,7 @@ The current build can enforce these rules:
 The booking request is refused when one of these conditions applies:
 
 - Your member account is not allowed to book.
-- You have no remaining rides.
+- You have unpaid dues or no remaining rides.
 - The shuttle is no longer open for booking.
 - You already booked that shuttle.
 - A rule blocks the request.
@@ -113,3 +118,4 @@ Use `My history` to:
 - If your account is not regularized, the booking page displays a warning and booking is disabled.
 - If you run out of rides, buy tickets before attempting another booking.
 - Language changes made in `My profile` affect your next screens after save.
+- The interface itself is available in French, English, German, Spanish, and Italian.

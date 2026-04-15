@@ -14,11 +14,9 @@ Ce guide s'adresse aux administrateurs qui gerent l'ensemble de l'application.
 - `Vehicules`
 - `Managers`
 - `Configuration`
+- `Paiements Stripe`
 - `Exports`
 - `Communication`
-- `Mon profil`
-- `Reservations`
-- `Mon historique`
 
 ## Tableau de bord
 
@@ -26,6 +24,7 @@ Utiliser le tableau de bord pour :
 
 - Consulter les indicateurs principaux du systeme
 - Consulter les dernieres entrees du journal
+- Consulter les prochaines remontees planifiees
 
 ## Membres
 
@@ -55,6 +54,10 @@ Utiliser `Cotisations` pour :
 - Definir les montants par type de membre au moment de la generation
 - Consulter le statut, le montant, le moyen de paiement et la date
 - Marquer une cotisation impayee comme encaissee
+
+Important :
+
+- Les paiements Stripe realises par les membres peuvent aussi regler automatiquement une cotisation.
 
 ## Remontees
 
@@ -99,7 +102,7 @@ Valeurs actuelles des droits :
 
 ## Configuration
 
-`Configuration` pilote a la fois les parametres generaux et les regles de reservation.
+`Configuration` pilote les parametres generaux, les regles de reservation, les reglages SMTP et les reglages Stripe.
 
 Les parametres generaux incluent actuellement :
 
@@ -109,6 +112,24 @@ Les parametres generaux incluent actuellement :
 - Cotisation actif
 - Cotisation sympathisant
 - Fenetre de reservation en jours
+
+Les parametres SMTP incluent actuellement :
+
+- Serveur SMTP
+- Port SMTP
+- Utilisateur SMTP
+- Mot de passe SMTP
+- Email expediteur
+- Nom expediteur
+- Reply-To
+
+Les parametres Stripe incluent actuellement :
+
+- URL publique de l'application
+- Cle publique Stripe
+- Cle secrete Stripe
+- Devise Stripe
+- Activation ou non du paiement Stripe pour les membres
 
 Les regles de reservation incluent actuellement :
 
@@ -121,6 +142,18 @@ Les regles de reservation incluent actuellement :
 Important :
 
 - Modifier la configuration avec prudence, car ces valeurs influencent directement les decisions de reservation.
+- Le paiement Stripe reste indisponible tant que les cles et l'URL publique ne sont pas completes.
+- L'envoi SMTP reste indisponible tant que les parametres SMTP requis ne sont pas complets.
+
+## Paiements Stripe
+
+Utiliser `Paiements Stripe` pour :
+
+- Verifier si Stripe est actif
+- Verifier l'URL publique et la devise configurees
+- Consulter le journal local des paiements
+- Consulter les sessions Checkout Stripe recentes
+- Consulter les transactions de balance Stripe recentes
 
 ## Communication
 
@@ -128,14 +161,18 @@ Utiliser `Communication` pour :
 
 - Rediger un message
 - Cibler tous les membres, les chauffeurs, les managers, les membres actifs ou les sympathisants
+- Ajouter des adresses email supplementaires
+- Televerser des pieces jointes
 - Enregistrer un brouillon
-- Marquer un message comme envoye
+- Envoyer l'email via SMTP
 - Consulter la liste des messages, leur statut, le nombre de destinataires et la date d'envoi
 
 Comportement actuel :
 
 - Les messages sont stockes et traces dans l'application.
-- La version actuelle marque les messages comme envoyes, mais cet ecran n'est pas relie a une passerelle email externe.
+- L'envoi utilise le compte SMTP configure avec authentification STARTTLS.
+- Les brouillons peuvent etre modifies ou supprimes avant envoi.
+- Les erreurs SMTP sont affichees a l'ecran et conservees sur le message.
 
 ## Exports
 
@@ -144,12 +181,13 @@ Utiliser `Exports` pour generer des fichiers CSV sur :
 - Les membres
 - Les cotisations
 - Les reservations
-- Les tickets et paiements
+- Les tickets
 
 ## Notes sur les roles et acces
 
 - Les ecrans reserves a l'administration dans la version actuelle sont `Configuration`, `Managers`, `Communication` et `Exports`.
 - Les modules membres, cotisations, remontees, chauffeurs et vehicules sont partages entre plusieurs roles et doivent etre utilises selon l'organisation du club.
+- La navigation administrateur remplace la navigation membre dans l'interface actuelle.
 
 ## Notes pratiques
 

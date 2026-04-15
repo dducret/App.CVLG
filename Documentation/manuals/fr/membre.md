@@ -7,8 +7,8 @@ Ce guide s'adresse aux membres standards qui utilisent l'espace membre de CVLG.
 ## Navigation principale
 
 - `Mon profil` : mettre a jour les informations personnelles, la langue, l'adresse et le mot de passe.
-- `Mes cotisations` : consulter les cotisations annuelles et marquer une cotisation comme payee dans la version actuelle.
-- `Mes tickets` : acheter des packs de tickets et consulter les achats.
+- `Mes cotisations` : consulter les cotisations annuelles et payer les cotisations impayees avec Stripe quand il est active.
+- `Mes tickets` : acheter des packs de tickets avec Stripe et consulter les achats.
 - `Reservations` : reserver ou annuler une place de navette a venir.
 - `Mon historique` : consulter les reservations a venir et passees.
 
@@ -42,11 +42,13 @@ Utiliser `Mes cotisations` pour :
 
 - Consulter les cotisations annuelles
 - Voir le montant, le statut, le moyen de paiement et la date
-- Utiliser l'action `Payer` sur une cotisation non reglee
+- Utiliser l'action `Payer avec Stripe` sur une cotisation non reglee lorsque Stripe est actif
 
 Comportement actuel :
 
-- Le bouton `Payer` marque la cotisation comme payee avec un moyen de paiement simule.
+- Un paiement Stripe reussi marque la cotisation comme payee avec le moyen de paiement `stripe`.
+- La page affiche aussi l'historique recent des paiements Stripe de cotisations.
+- Si Stripe n'est pas configure, l'action de paiement n'est pas disponible.
 
 ## Mes tickets
 
@@ -54,12 +56,14 @@ Utiliser `Mes tickets` pour :
 
 - Voir le prix unitaire du ticket
 - Voir le nombre de montees restantes
-- Acheter un nouveau pack de tickets par quantite
+- Acheter un nouveau pack de tickets par quantite via Stripe
 - Consulter l'historique des achats
+- Consulter les derniers paiements Stripe lies aux tickets
 
 Important :
 
 - Les reservations dependent du nombre de montees restantes.
+- Un paiement Stripe reussi cree automatiquement le pack de tickets dans l'application.
 
 ## Reservations
 
@@ -79,6 +83,7 @@ La page affiche aussi :
 - Le nombre de places restantes par navette
 - Le chauffeur et le vehicule lorsqu'ils sont affectes
 - Votre propre statut : reserve ou liste d'attente
+- Une etape de confirmation en fenetre modale avant la creation de la reservation
 
 ## Regles de reservation
 
@@ -96,7 +101,7 @@ La version actuelle peut appliquer les regles suivantes :
 La reservation est refusee dans les cas suivants :
 
 - Votre compte membre n'est pas autorise a reserver.
-- Vous n'avez plus de montee disponible.
+- Vous avez des cotisations impayees ou plus aucune montee disponible.
 - La navette n'est plus ouverte a la reservation.
 - Vous avez deja reserve cette navette.
 - Une regle bloque la demande.
@@ -113,3 +118,4 @@ Utiliser `Mon historique` pour :
 - Si votre situation membre n'est pas reguliere, la page de reservation affiche un avertissement et bloque la reservation.
 - Si vous n'avez plus de montees, achetez des tickets avant une nouvelle reservation.
 - Un changement de langue dans `Mon profil` s'applique aux ecrans suivants apres enregistrement.
+- L'interface est disponible en francais, anglais, allemand, espagnol et italien.

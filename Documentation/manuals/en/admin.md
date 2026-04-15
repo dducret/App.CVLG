@@ -14,11 +14,9 @@ This guide is for administrators managing the full application scope.
 - `Vehicles`
 - `Managers`
 - `Configuration`
+- `Stripe payments`
 - `Exports`
 - `Communication`
-- `My profile`
-- `Bookings`
-- `My history`
 
 ## Dashboard
 
@@ -26,6 +24,7 @@ Use the dashboard to:
 
 - Review key counts across the system
 - Review recent journal entries
+- Review the next upcoming shuttles
 
 ## Members
 
@@ -55,6 +54,10 @@ Use `Dues` to:
 - Set fee values by member type during generation
 - Review status, amount, payment method, and payment date
 - Mark an unpaid due as collected
+
+Important:
+
+- Member self-service Stripe payments can also settle dues automatically.
 
 ## Journeys
 
@@ -99,7 +102,7 @@ Current rights values:
 
 ## Configuration
 
-`Configuration` controls both general settings and booking rules.
+`Configuration` controls general settings, booking rules, SMTP settings, and Stripe settings.
 
 General settings currently include:
 
@@ -109,6 +112,24 @@ General settings currently include:
 - Active membership fee
 - Supporter membership fee
 - Booking window in days
+
+SMTP settings currently include:
+
+- SMTP host
+- SMTP port
+- SMTP username
+- SMTP password
+- From email
+- From name
+- Reply-To
+
+Stripe settings currently include:
+
+- Public application base URL
+- Stripe publishable key
+- Stripe secret key
+- Stripe currency
+- A switch to enable or disable member Stripe checkout
 
 Booking rules currently include:
 
@@ -121,6 +142,18 @@ Booking rules currently include:
 Important:
 
 - Update configuration carefully because these values directly affect booking decisions.
+- Stripe checkout stays disabled until the required keys and public base URL are set.
+- SMTP sending stays unavailable until the required SMTP settings are complete.
+
+## Stripe Payments
+
+Use `Stripe payments` to:
+
+- Review whether Stripe is currently enabled
+- Review the public base URL and configured currency
+- Review the local payment journal
+- Review recent remote Stripe Checkout sessions
+- Review recent Stripe balance transactions
 
 ## Communication
 
@@ -128,14 +161,18 @@ Use `Communication` to:
 
 - Compose a message
 - Target all members, drivers, managers, active members, or supporters
+- Add extra email recipients manually
+- Upload attachments
 - Save a draft
-- Mark a message as sent
+- Send the email through SMTP
 - Review the message list, status, recipient count, and send timestamp
 
 Current behavior:
 
 - Messages are stored and tracked inside the application.
-- The current build marks messages as sent, but this screen does not integrate with an external mail gateway.
+- Sending uses the configured SMTP account with STARTTLS authentication.
+- Drafts can be edited or deleted before sending.
+- SMTP delivery errors are shown in the interface and stored on the message.
 
 ## Exports
 
@@ -144,12 +181,13 @@ Use `Exports` to generate CSV files for:
 - Members
 - Dues
 - Bookings
-- Ticket and payment records
+- Ticket records
 
 ## Role And Access Notes
 
 - Admin-only screens in the current build include `Configuration`, `Managers`, `Communication`, and `Exports`.
 - Members, dues, journeys, drivers, and vehicles are split across roles and should be delegated accordingly in operations.
+- The admin-like navigation replaces the member navigation in the current UI.
 
 ## Practical Notes
 

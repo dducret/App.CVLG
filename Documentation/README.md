@@ -10,9 +10,9 @@ This folder contains the maintainable user manuals for the current PHP applicati
 
 ## Role Guides
 
-- Member guide: booking, tickets, dues, profile, and history.
-- Logistics guide: shuttle operations, drivers, vehicles, and operational bookings.
-- Admin guide: configuration, members, dues, communications, exports, and access control.
+- Member guide: booking, waitlist rules, Stripe payments for dues and tickets, profile, and history.
+- Logistics guide: shuttle operations, drivers, vehicles, members, dues, and operational bookings.
+- Admin guide: configuration, Stripe and SMTP setup, members, dues, communications, exports, and access control.
 
 ## File Map
 
@@ -29,3 +29,4 @@ This folder contains the maintainable user manuals for the current PHP applicati
 - Document actual behavior in the current build, not planned features.
 - Prefer short task-oriented steps over long explanations.
 - Call out role restrictions and important side effects explicitly.
+- Keep navigation lists aligned with `app/layout.php`, because admin-like users do not see the member navigation set.
