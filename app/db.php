@@ -93,6 +93,33 @@ function ensure_schema_updates(PDO $pdo): void
             FOREIGN KEY(message) REFERENCES Message(id) ON DELETE CASCADE
         )'
     );
+
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS Payment (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            person INTEGER NOT NULL,
+            memberYearFee INTEGER,
+            kind TEXT NOT NULL,
+            description TEXT NOT NULL,
+            quantity INTEGER,
+            unitAmount NUMERIC,
+            amount NUMERIC NOT NULL,
+            currency TEXT NOT NULL DEFAULT 'chf',
+            provider TEXT NOT NULL DEFAULT 'stripe',
+            status TEXT NOT NULL DEFAULT 'pending',
+            providerSessionId TEXT,
+            providerPaymentIntentId TEXT,
+            providerChargeId TEXT,
+            providerReceiptUrl TEXT,
+            providerPayload TEXT,
+            fulfilledAt TEXT,
+            paidAt TEXT,
+            createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(person) REFERENCES Person(id),
+            FOREIGN KEY(memberYearFee) REFERENCES MemberYearFee(id)
+        )"
+    );
 }
 
 function seed_database(PDO $pdo): void
@@ -263,11 +290,16 @@ function ensure_demo_data(PDO $pdo): void
 function ensure_default_settings(PDO $pdo): void
 {
     $defaults = [
+        'app_base_url' => '',
         'booking_rule_same_time_block' => '1',
         'booking_rule_daily_confirmed_limit' => '1',
         'booking_rule_allow_waitlist_after_daily_limit' => '1',
         'booking_rule_journey_waitlist_limit' => '3',
         'booking_rule_daily_waitlist_limit' => '3',
+        'stripe_enabled' => '0',
+        'stripe_publishable_key' => '',
+        'stripe_secret_key' => '',
+        'stripe_currency' => 'chf',
         'smtp_host' => '',
         'smtp_port' => '587',
         'smtp_username' => '',

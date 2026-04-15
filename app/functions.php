@@ -244,9 +244,9 @@ function booking_rule_definitions(): array
     ];
 }
 
-function format_money($amount): string
+function format_money($amount, string $currency = 'CHF'): string
 {
-    return number_format((float) $amount, 2, '.', ' ') . ' CHF';
+    return number_format((float) $amount, 2, '.', ' ') . ' ' . strtoupper($currency);
 }
 
 function format_date(?string $date): string
@@ -256,6 +256,15 @@ function format_date(?string $date): string
     }
 
     return date('d.m.Y', strtotime($date));
+}
+
+function format_datetime(?string $date): string
+{
+    if (!$date) {
+        return '-';
+    }
+
+    return date('d.m.Y H:i', strtotime($date));
 }
 
 function remaining_tickets(int $personId): int

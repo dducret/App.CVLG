@@ -11,6 +11,7 @@ function navigation_links(array $user): array
         'vehicles.php' => t('nav_vehicles', 'Vehicules'),
         'managers.php' => t('nav_managers', 'Managers'),
         'configuration.php' => t('nav_configuration', 'Configuration'),
+        'stripe_transactions.php' => 'Paiements Stripe',
         'exports.php' => t('nav_exports', 'Exports'),
     ];
 

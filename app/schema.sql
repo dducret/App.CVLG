@@ -140,6 +140,31 @@ CREATE TABLE IF NOT EXISTS MemberYearFee (
     UNIQUE(member, yearFee)
 );
 
+CREATE TABLE IF NOT EXISTS Payment (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    person INTEGER NOT NULL,
+    memberYearFee INTEGER,
+    kind TEXT NOT NULL,
+    description TEXT NOT NULL,
+    quantity INTEGER,
+    unitAmount NUMERIC,
+    amount NUMERIC NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'chf',
+    provider TEXT NOT NULL DEFAULT 'stripe',
+    status TEXT NOT NULL DEFAULT 'pending',
+    providerSessionId TEXT,
+    providerPaymentIntentId TEXT,
+    providerChargeId TEXT,
+    providerReceiptUrl TEXT,
+    providerPayload TEXT,
+    fulfilledAt TEXT,
+    paidAt TEXT,
+    createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(person) REFERENCES Person(id),
+    FOREIGN KEY(memberYearFee) REFERENCES MemberYearFee(id)
+);
+
 CREATE TABLE IF NOT EXISTS Booking (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     journey INTEGER NOT NULL,
