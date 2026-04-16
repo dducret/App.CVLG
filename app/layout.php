@@ -15,6 +15,16 @@ function navigation_links(array $user): array
         'exports.php' => t('nav_exports', 'Exports'),
     ];
 
+    if (($user['role'] ?? '') === 'L') {
+        unset(
+            $adminLinks['members.php'],
+            $adminLinks['dues.php'],
+            $adminLinks['managers.php'],
+            $adminLinks['configuration.php'],
+            $adminLinks['exports.php']
+        );
+    }
+
     if (can_manage_communications($user)) {
         $adminLinks['communications.php'] = t('nav_communications', 'Communication');
     }

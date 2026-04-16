@@ -13,6 +13,10 @@ $stats = [
     'Tickets vendus' => (int) fetch_value('SELECT COALESCE(SUM(quantity), 0) FROM Ticket'),
 ];
 
+if (($user['role'] ?? '') === 'L') {
+    unset($stats['Cotisations impayées']);
+}
+
 $nextJourneys = fetch_all(
     'SELECT Journey.id, Journey.Label, Journey.dateFrom, Journey.timeStart, Vehicule.name AS vehicleName
      FROM Journey
